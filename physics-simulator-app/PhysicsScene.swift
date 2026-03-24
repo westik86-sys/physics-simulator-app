@@ -28,6 +28,8 @@ final class PhysicsScene: SKScene {
         let node: SKNode
         let anchor: SKNode
         let joint: SKPhysicsJointSpring
+        let startLocation: CGPoint
+        let startTimestamp: TimeInterval
         var previousLocation: CGPoint
         var previousTimestamp: TimeInterval
     }
@@ -37,6 +39,8 @@ final class PhysicsScene: SKScene {
     private let maximumLinearVelocity: CGFloat = 900
     private let maximumAngularVelocity: CGFloat = 8
     private let releaseImpulseMultiplier: CGFloat = 0.018
+    private let tapDistanceThreshold: CGFloat = 14
+    private let tapDurationThreshold: TimeInterval = 0.22
     private let emojiPalette = ["😀", "😎", "🤖", "🐥", "🍎", "🌈", "⚽️", "🪐", "🍕", "🎈", "🧩", "🚀"]
     private(set) var settings = Settings()
 
@@ -290,6 +294,8 @@ final class PhysicsScene: SKScene {
             node: node,
             anchor: anchor,
             joint: joint,
+            startLocation: location,
+            startTimestamp: touch.timestamp,
             previousLocation: location,
             previousTimestamp: touch.timestamp
         )
@@ -311,6 +317,11 @@ final class PhysicsScene: SKScene {
         guard let dragState = activeDrags.removeValue(forKey: touchID) else { return }
 
         let currentLocation = touch.location(in: self)
+        let totalDistance = hypot(
+            currentLocation.x - dragState.startLocation.x,
+            currentLocation.y - dragState.startLocation.y
+        )
+        let totalDuration = touch.timestamp - dragState.startTimestamp
         let previousLocation = touch.previousLocation(in: self)
         let timeDelta = max(touch.timestamp - dragState.previousTimestamp, 1.0 / 120.0)
         let velocity = CGVector(
@@ -321,6 +332,11 @@ final class PhysicsScene: SKScene {
         physicsWorld.remove(dragState.joint)
         dragState.anchor.removeFromParent()
 
+        if totalDistance <= tapDistanceThreshold, totalDuration <= tapDurationThreshold {
+            pop(node: dragState.node)
+            return
+        }
+
         if let body = dragState.node.physicsBody {
             body.applyImpulse(
                 CGVector(
@@ -330,5 +346,16 @@ final class PhysicsScene: SKScene {
             )
             clampVelocity(for: body)
         }
+    }
+
+    private func pop(node: SKNode) {
+        node.physicsBody = nil
+
+        let group = SKAction.group([
+            .scale(to: 1.35, duration: 0.12),
+            .fadeOut(withDuration: 0.12)
+        ])
+        let remove = SKAction.removeFromParent()
+        node.run(.sequence([group, remove]))
     }
 }
