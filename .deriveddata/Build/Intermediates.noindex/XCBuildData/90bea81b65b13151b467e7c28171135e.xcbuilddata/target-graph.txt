@@ -1,0 +1,2 @@
+Target dependency graph (1 target)
+Target 'physics-simulator-app' in project 'physics-simulator-app' (no dependencies)

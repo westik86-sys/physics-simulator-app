@@ -6,10 +6,11 @@
 //
 
 import SpriteKit
+import UIKit
 
 final class PhysicsScene: SKScene {
     private struct DragState {
-        let node: SKShapeNode
+        let node: SKNode
         let anchor: SKNode
         let joint: SKPhysicsJointSpring
         var previousLocation: CGPoint
@@ -21,15 +22,7 @@ final class PhysicsScene: SKScene {
     private let maximumLinearVelocity: CGFloat = 900
     private let maximumAngularVelocity: CGFloat = 8
     private let releaseImpulseMultiplier: CGFloat = 0.018
-    private let palette: [UIColor] = [
-        .systemMint,
-        .systemYellow,
-        .systemPink,
-        .systemCyan,
-        .systemOrange,
-        .systemGreen,
-        .systemBlue
-    ]
+    private let emojiPalette = ["😀", "😎", "🤖", "🐥", "🍎", "🌈", "⚽️", "🪐", "🍕", "🎈", "🧩", "🚀"]
 
     override func didMove(to view: SKView) {
         backgroundColor = .black
@@ -42,7 +35,7 @@ final class PhysicsScene: SKScene {
     }
 
     func applyImpulse(_ impulse: CGVector) {
-        for case let node as SKShapeNode in children {
+        for node in children where node.name == "dynamicBody" {
             guard let body = node.physicsBody else { continue }
 
             body.applyImpulse(impulse)
@@ -58,22 +51,21 @@ final class PhysicsScene: SKScene {
     func spawnRandomBody() {
         guard size.width > 120, size.height > 180 else { return }
 
-        let color = palette.randomElement() ?? .white
         let position = CGPoint(
             x: CGFloat.random(in: 60...(size.width - 60)),
             y: size.height - 90
         )
 
-        let node: SKShapeNode
+        let node: SKSpriteNode
         if Bool.random() {
             let radius = CGFloat.random(in: 22...38)
-            node = makeCircle(radius: radius, color: color, position: position)
+            node = makeCircle(radius: radius, position: position)
         } else {
             let bodySize = CGSize(
                 width: CGFloat.random(in: 44...108),
                 height: CGFloat.random(in: 44...108)
             )
-            node = makeRectangle(size: bodySize, color: color, position: position)
+            node = makeRectangle(size: bodySize, position: position)
         }
 
         addChild(node)
@@ -128,12 +120,12 @@ final class PhysicsScene: SKScene {
     }
 
     private func addDemoBodies() {
-        let bodies: [SKShapeNode] = [
-            makeCircle(radius: 26, color: .systemMint, position: CGPoint(x: size.width * 0.25, y: size.height * 0.78)),
-            makeCircle(radius: 34, color: .systemYellow, position: CGPoint(x: size.width * 0.72, y: size.height * 0.82)),
-            makeRectangle(size: CGSize(width: 68, height: 68), color: .systemPink, position: CGPoint(x: size.width * 0.5, y: size.height * 0.72)),
-            makeRectangle(size: CGSize(width: 110, height: 48), color: .systemCyan, position: CGPoint(x: size.width * 0.34, y: size.height * 0.58)),
-            makeRectangle(size: CGSize(width: 54, height: 120), color: .systemOrange, position: CGPoint(x: size.width * 0.68, y: size.height * 0.62))
+        let bodies: [SKSpriteNode] = [
+            makeCircle(radius: 26, position: CGPoint(x: size.width * 0.25, y: size.height * 0.78)),
+            makeCircle(radius: 34, position: CGPoint(x: size.width * 0.72, y: size.height * 0.82)),
+            makeRectangle(size: CGSize(width: 68, height: 68), position: CGPoint(x: size.width * 0.5, y: size.height * 0.72)),
+            makeRectangle(size: CGSize(width: 110, height: 48), position: CGPoint(x: size.width * 0.34, y: size.height * 0.58)),
+            makeRectangle(size: CGSize(width: 54, height: 120), position: CGPoint(x: size.width * 0.68, y: size.height * 0.62))
         ]
 
         for body in bodies {
@@ -141,32 +133,49 @@ final class PhysicsScene: SKScene {
         }
     }
 
-    private func makeCircle(radius: CGFloat, color: UIColor, position: CGPoint) -> SKShapeNode {
-        let node = SKShapeNode(circleOfRadius: radius)
-        node.fillColor = color
-        node.strokeColor = .clear
+    private func makeCircle(radius: CGFloat, position: CGPoint) -> SKSpriteNode {
+        let node = makeEmojiNode(targetSize: CGSize(width: radius * 2, height: radius * 2))
         node.position = position
-        node.physicsBody = SKPhysicsBody(circleOfRadius: radius)
+        node.physicsBody = SKPhysicsBody(circleOfRadius: max(node.size.width, node.size.height) * 0.32)
         configurePhysics(for: node.physicsBody, allowsRotation: true)
         node.name = "dynamicBody"
         return node
     }
 
-    private func makeRectangle(size: CGSize, color: UIColor, position: CGPoint) -> SKShapeNode {
-        let rect = CGRect(
-            x: -size.width / 2,
-            y: -size.height / 2,
-            width: size.width,
-            height: size.height
-        )
-        let node = SKShapeNode(rect: rect, cornerRadius: min(size.width, size.height) * 0.18)
-        node.fillColor = color
-        node.strokeColor = .clear
+    private func makeRectangle(size: CGSize, position: CGPoint) -> SKSpriteNode {
+        let node = makeEmojiNode(targetSize: size)
         node.position = position
-        node.physicsBody = SKPhysicsBody(rectangleOf: size)
+        node.physicsBody = SKPhysicsBody(circleOfRadius: max(node.size.width, node.size.height) * 0.32)
         configurePhysics(for: node.physicsBody, allowsRotation: true)
         node.name = "dynamicBody"
         return node
+    }
+
+    private func makeEmojiNode(targetSize: CGSize) -> SKSpriteNode {
+        let emoji = emojiPalette.randomElement() ?? "🙂"
+        let fontSize = max(targetSize.width, targetSize.height) * 0.95
+        let texture = makeEmojiTexture(emoji: emoji, fontSize: fontSize)
+        let node = SKSpriteNode(texture: texture)
+        node.size = texture.size()
+        return node
+    }
+
+    private func makeEmojiTexture(emoji: String, fontSize: CGFloat) -> SKTexture {
+        let font = UIFont.systemFont(ofSize: fontSize)
+        let attributes: [NSAttributedString.Key: Any] = [.font: font]
+        let textSize = (emoji as NSString).size(withAttributes: attributes)
+        let canvasSize = CGSize(width: ceil(textSize.width + fontSize * 0.2), height: ceil(textSize.height + fontSize * 0.2))
+        let origin = CGPoint(
+            x: (canvasSize.width - textSize.width) / 2,
+            y: (canvasSize.height - textSize.height) / 2
+        )
+
+        let renderer = UIGraphicsImageRenderer(size: canvasSize)
+        let image = renderer.image { _ in
+            (emoji as NSString).draw(at: origin, withAttributes: attributes)
+        }
+
+        return SKTexture(image: image)
     }
 
     private func configurePhysics(for physicsBody: SKPhysicsBody?, allowsRotation: Bool) {
@@ -198,7 +207,7 @@ final class PhysicsScene: SKScene {
 
     private func beginDragging(with touch: UITouch) {
         let location = touch.location(in: self)
-        guard let node = atPoint(location) as? SKShapeNode ?? atPoint(location).parent as? SKShapeNode else {
+        guard let node = atPoint(location) as? SKNode ?? atPoint(location).parent else {
             return
         }
         guard node.name == "dynamicBody", let body = node.physicsBody else { return }
