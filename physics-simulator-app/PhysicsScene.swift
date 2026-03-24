@@ -349,13 +349,148 @@ final class PhysicsScene: SKScene {
     }
 
     private func pop(node: SKNode) {
+        let popPosition = node.position
+        let popColor = emojiColor(from: node)
         node.physicsBody = nil
+        run(makeScreenShake())
+
+        let flash = SKShapeNode(circleOfRadius: 12)
+        flash.position = popPosition
+        flash.fillColor = popColor.withAlphaComponent(0.75)
+        flash.strokeColor = .clear
+        flash.zPosition = 5
+        addChild(flash)
+
+        flash.run(
+            .sequence([
+                .group([
+                    .scale(to: 4.8, duration: 0.16),
+                    .fadeOut(withDuration: 0.16)
+                ]),
+                .removeFromParent()
+            ])
+        )
+
+        addChild(makeBurstEmitter(at: popPosition, color: popColor, scale: 0.16, speed: 185, count: 16, lifetime: 0.42))
+        addChild(makeBurstEmitter(at: popPosition, color: .white, scale: 0.08, speed: 120, count: 26, lifetime: 0.3))
 
         let group = SKAction.group([
-            .scale(to: 1.35, duration: 0.12),
-            .fadeOut(withDuration: 0.12)
+            .scale(to: 1.45, duration: 0.1),
+            .fadeOut(withDuration: 0.1)
         ])
         let remove = SKAction.removeFromParent()
         node.run(.sequence([group, remove]))
+    }
+
+    private func makeBurstEmitter(
+        at position: CGPoint,
+        color: UIColor,
+        scale: CGFloat,
+        speed: CGFloat,
+        count: Int,
+        lifetime: CGFloat
+    ) -> SKEmitterNode {
+        let emitter = SKEmitterNode()
+        emitter.position = position
+        emitter.zPosition = 6
+        emitter.particleTexture = makeParticleTexture(color: color)
+        emitter.particleBirthRate = 0
+        emitter.numParticlesToEmit = count
+        emitter.particleLifetime = lifetime
+        emitter.particleLifetimeRange = lifetime * 0.2
+        emitter.emissionAngleRange = .pi * 2
+        emitter.particleSpeed = speed
+        emitter.particleSpeedRange = speed * 0.35
+        emitter.particleAlpha = 0.95
+        emitter.particleAlphaRange = 0.15
+        emitter.particleAlphaSpeed = -2.8
+        emitter.particleScale = scale
+        emitter.particleScaleRange = scale * 0.45
+        emitter.particleScaleSpeed = -scale * 0.9
+        emitter.xAcceleration = 0
+        emitter.yAcceleration = -25
+        emitter.particleRotationRange = .pi * 2
+        emitter.particleRotationSpeed = 7
+        emitter.particleBlendMode = .add
+        emitter.advanceSimulationTime(0.02)
+        emitter.run(.sequence([.wait(forDuration: TimeInterval(lifetime + 0.12)), .removeFromParent()]))
+        return emitter
+    }
+
+    private func makeParticleTexture(color: UIColor) -> SKTexture {
+        let size = CGSize(width: 14, height: 14)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        let image = renderer.image { context in
+            let rect = CGRect(origin: .zero, size: size)
+            let cgContext = context.cgContext
+
+            cgContext.setFillColor(color.cgColor)
+            cgContext.fillEllipse(in: rect.insetBy(dx: 2, dy: 2))
+
+            cgContext.setFillColor(UIColor.white.withAlphaComponent(0.7).cgColor)
+            cgContext.fillEllipse(in: CGRect(x: 4, y: 3, width: 4, height: 4))
+        }
+
+        return SKTexture(image: image)
+    }
+
+    private func makeScreenShake() -> SKAction {
+        let offsets: [CGPoint] = [
+            CGPoint(x: -6, y: 4),
+            CGPoint(x: 5, y: -3),
+            CGPoint(x: -3, y: -5),
+            CGPoint(x: 2, y: 3),
+            .zero
+        ]
+
+        let actions = offsets.map { offset in
+            SKAction.moveBy(x: offset.x, y: offset.y, duration: 0.025)
+        }
+        return .sequence(actions)
+    }
+
+    private func emojiColor(from node: SKNode) -> UIColor {
+        if let sprite = node as? SKSpriteNode, let texture = sprite.texture {
+            return averageColor(from: texture) ?? .systemYellow
+        }
+
+        return .systemYellow
+    }
+
+    private func averageColor(from texture: SKTexture) -> UIColor? {
+        let cgImage = texture.cgImage()
+
+        let width = cgImage.width
+        let height = cgImage.height
+        guard let data = cgImage.dataProvider?.data else { return nil }
+        guard let bytes = CFDataGetBytePtr(data) else { return nil }
+
+        var redTotal: CGFloat = 0
+        var greenTotal: CGFloat = 0
+        var blueTotal: CGFloat = 0
+        var samples: CGFloat = 0
+        let bytesPerPixel = 4
+
+        for y in stride(from: 0, to: height, by: max(1, height / 8)) {
+            for x in stride(from: 0, to: width, by: max(1, width / 8)) {
+                let index = ((y * width) + x) * bytesPerPixel
+                let alpha = CGFloat(bytes[index + 3]) / 255
+                guard alpha > 0.1 else { continue }
+
+                redTotal += CGFloat(bytes[index]) / 255
+                greenTotal += CGFloat(bytes[index + 1]) / 255
+                blueTotal += CGFloat(bytes[index + 2]) / 255
+                samples += 1
+            }
+        }
+
+        guard samples > 0 else { return nil }
+
+        return UIColor(
+            red: redTotal / samples,
+            green: greenTotal / samples,
+            blue: blueTotal / samples,
+            alpha: 1
+        )
     }
 }
