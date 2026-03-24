@@ -81,24 +81,26 @@ final class PhysicsScene: SKScene {
     func spawnRandomBody() {
         guard size.width > 120, size.height > 180 else { return }
 
-        let position = CGPoint(
-            x: CGFloat.random(in: 60...(size.width - 60)),
-            y: size.height - 90
-        )
-
-        let node: SKSpriteNode
-        if Bool.random() {
-            let radius = CGFloat.random(in: 22...38)
-            node = makeCircle(radius: radius, position: position)
-        } else {
-            let bodySize = CGSize(
-                width: CGFloat.random(in: 44...108),
-                height: CGFloat.random(in: 44...108)
+        for index in 0..<3 {
+            let position = CGPoint(
+                x: CGFloat.random(in: 60...(size.width - 60)),
+                y: size.height - 90 + CGFloat(index * 26)
             )
-            node = makeRectangle(size: bodySize, position: position)
-        }
 
-        addChild(node)
+            let node: SKSpriteNode
+            if Bool.random() {
+                let radius = CGFloat.random(in: 22...38)
+                node = makeCircle(radius: radius, position: position)
+            } else {
+                let bodySize = CGSize(
+                    width: CGFloat.random(in: 44...108),
+                    height: CGFloat.random(in: 44...108)
+                )
+                node = makeRectangle(size: bodySize, position: position)
+            }
+
+            addChild(node)
+        }
     }
 
     override func didChangeSize(_ oldSize: CGSize) {

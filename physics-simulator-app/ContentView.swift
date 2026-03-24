@@ -123,7 +123,14 @@ struct ContentView: View {
 }
 
 private struct SettingsSheet: View {
+    private struct HelpItem: Identifiable {
+        let id: String
+        let title: String
+        let description: String
+    }
+
     @Binding var settings: PhysicsScene.Settings
+    @State private var activeHelpItem: HelpItem?
 
     var body: some View {
         NavigationStack {
@@ -162,6 +169,11 @@ private struct SettingsSheet: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .preferredColorScheme(.dark)
+        .sheet(item: $activeHelpItem) { item in
+            helpSheet(for: item)
+                .presentationDetents([.height(220)])
+                .presentationDragIndicator(.visible)
+        }
     }
 
     private func settingsGroup(title: String, rows: [AnyView]) -> some View {
@@ -192,9 +204,15 @@ private struct SettingsSheet: View {
 
     private var emojiPackEditor: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Enter emoji separated by spaces")
-                .font(.system(size: 14, weight: .medium, design: .rounded))
-                .foregroundStyle(.white.opacity(0.72))
+            HStack(spacing: 8) {
+                Text("Enter emoji separated by spaces")
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.72))
+                helpButton(
+                    title: "Emoji Pack",
+                    description: "Это набор эмодзи, из которого случайно выбираются новые объекты. Указывай эмодзи через пробел, например: 😀 😎 🚀 🍕"
+                )
+            }
 
             TextField("", text: $settings.emojiSet, axis: .vertical)
                 .textInputAutocapitalization(.never)
@@ -215,9 +233,12 @@ private struct SettingsSheet: View {
         AnyView(
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text(title)
-                        .font(.system(size: 15, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white)
+                    HStack(spacing: 8) {
+                        Text(title)
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.white)
+                        helpButton(title: title, description: helpDescription(for: title))
+                    }
                     Spacer()
                     Text(Double(value.wrappedValue).formatted(.number.precision(.fractionLength(2))))
                         .font(.system(size: 14, weight: .medium, design: .monospaced))
@@ -235,6 +256,56 @@ private struct SettingsSheet: View {
                 .tint(.white)
             }
         )
+    }
+
+    private func helpButton(title: String, description: String) -> some View {
+        Button {
+            activeHelpItem = HelpItem(id: title, title: title, description: description)
+        } label: {
+            Image(systemName: "questionmark.circle")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.72))
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func helpDescription(for title: String) -> String {
+        switch title {
+        case "Mass":
+            return "Масса влияет на то, насколько тяжело эмодзи сдвинуть или разогнать. Чем больше значение, тем объект ощущается тяжелее."
+        case "Friction":
+            return "Трение определяет, насколько сильно эмодзи цепляются за поверхности и друг за друга при касании и скольжении."
+        case "Bounce":
+            return "Прыгучесть отвечает за силу отскока после удара. Чем выше значение, тем сильнее эмодзи отлетают."
+        case "Linear Damping":
+            return "Линейное затухание постепенно замедляет обычное движение объекта по прямой. Чем больше значение, тем быстрее он теряет скорость."
+        case "Angular Damping":
+            return "Угловое затухание замедляет вращение эмодзи. При больших значениях кручение быстрее останавливается."
+        case "Emoji Size":
+            return "Размер эмодзи меняет только визуальный масштаб самих объектов на экране."
+        case "Collision Size":
+            return "Размер коллизии определяет невидимую физическую область столкновения. Он влияет на то, насколько близко эмодзи могут подходить друг к другу."
+        default:
+            return "Описание для этого параметра пока не задано."
+        }
+    }
+
+    private func helpSheet(for item: HelpItem) -> some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 14) {
+                Text(item.description)
+                    .font(.system(size: 16, weight: .regular, design: .rounded))
+                    .foregroundStyle(.white.opacity(0.92))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                Spacer()
+            }
+            .padding(20)
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle(item.title)
+            .navigationBarTitleDisplayMode(.inline)
+        }
+        .preferredColorScheme(.dark)
     }
 }
 

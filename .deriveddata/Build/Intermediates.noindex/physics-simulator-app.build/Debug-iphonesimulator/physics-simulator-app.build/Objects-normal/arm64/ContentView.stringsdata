@@ -7,15 +7,7 @@
         "key": "Settings",
         "location": {
           "startingColumn": 30,
-          "startingLine": 161
-        }
-      },
-      {
-        "comment": "",
-        "key": "Enter emoji separated by spaces",
-        "location": {
-          "startingColumn": 18,
-          "startingLine": 195
+          "startingLine": 168
         }
       },
       {
@@ -23,7 +15,7 @@
         "key": "Example: 😀 😎 🚀 🍕",
         "location": {
           "startingColumn": 18,
-          "startingLine": 208
+          "startingLine": 226
         }
       },
       {
@@ -31,7 +23,15 @@
         "key": "",
         "location": {
           "startingColumn": 23,
-          "startingLine": 199
+          "startingLine": 217
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enter emoji separated by spaces",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 208
         }
       }
     ]
