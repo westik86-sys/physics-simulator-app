@@ -7,7 +7,31 @@
         "key": "Settings",
         "location": {
           "startingColumn": 30,
-          "startingLine": 151
+          "startingLine": 161
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enter emoji separated by spaces",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 195
+        }
+      },
+      {
+        "comment": "",
+        "key": "Example: 😀 😎 🚀 🍕",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 208
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 199
         }
       }
     ]

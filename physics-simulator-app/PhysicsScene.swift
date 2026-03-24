@@ -17,6 +17,7 @@ final class PhysicsScene: SKScene {
         var angularDamping: CGFloat = 0.35
         var emojiScale: CGFloat = 1
         var collisionScale: CGFloat = 0.64
+        var emojiSet: String = "😀 😎 🤖 🐥 🍎 🌈 ⚽️ 🪐 🍕 🎈 🧩 🚀"
     }
 
     private enum NodeMetricsKey {
@@ -41,7 +42,6 @@ final class PhysicsScene: SKScene {
     private let releaseImpulseMultiplier: CGFloat = 0.018
     private let tapDistanceThreshold: CGFloat = 14
     private let tapDurationThreshold: TimeInterval = 0.22
-    private let emojiPalette = ["😀", "😎", "🤖", "🐥", "🍎", "🌈", "⚽️", "🪐", "🍕", "🎈", "🧩", "🚀"]
     private(set) var settings = Settings()
 
     override func didMove(to view: SKView) {
@@ -180,7 +180,7 @@ final class PhysicsScene: SKScene {
     }
 
     private func makeEmojiNode(targetSize: CGSize) -> SKSpriteNode {
-        let emoji = emojiPalette.randomElement() ?? "🙂"
+        let emoji = randomEmoji()
         let fontSize = max(targetSize.width, targetSize.height) * 0.95
         let texture = makeEmojiTexture(emoji: emoji, fontSize: fontSize)
         let node = SKSpriteNode(texture: texture)
@@ -435,6 +435,15 @@ final class PhysicsScene: SKScene {
         }
 
         return makeEmojiTexture(emoji: "✨", fontSize: 28)
+    }
+
+    private func randomEmoji() -> String {
+        let emojis = settings.emojiSet
+            .split(whereSeparator: \.isWhitespace)
+            .map(String.init)
+            .filter { !$0.isEmpty }
+
+        return emojis.randomElement() ?? "🙂"
     }
 
     private func makeScreenShake() -> SKAction {

@@ -20,6 +20,7 @@ struct ContentView: View {
     @AppStorage("settings.angularDamping") private var storedAngularDamping = 0.35
     @AppStorage("settings.emojiScale") private var storedEmojiScale = 1.0
     @AppStorage("settings.collisionScale") private var storedCollisionScale = 0.64
+    @AppStorage("settings.emojiSet") private var storedEmojiSet = "😀 😎 🤖 🐥 🍎 🌈 ⚽️ 🪐 🍕 🎈 🧩 🚀"
 
     private let scene: PhysicsScene = {
         let scene = PhysicsScene()
@@ -103,7 +104,8 @@ struct ContentView: View {
             linearDamping: storedLinearDamping,
             angularDamping: storedAngularDamping,
             emojiScale: storedEmojiScale,
-            collisionScale: storedCollisionScale
+            collisionScale: storedCollisionScale,
+            emojiSet: storedEmojiSet
         )
     }
 
@@ -115,6 +117,7 @@ struct ContentView: View {
         storedAngularDamping = settings.angularDamping
         storedEmojiScale = settings.emojiScale
         storedCollisionScale = settings.collisionScale
+        storedEmojiSet = settings.emojiSet
     }
 
 }
@@ -126,6 +129,13 @@ private struct SettingsSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
+                    settingsGroup(
+                        title: "Emoji Pack",
+                        content: {
+                            emojiPackEditor
+                        }
+                    )
+
                     settingsGroup(
                         title: "Physics",
                         rows: [
@@ -155,22 +165,49 @@ private struct SettingsSheet: View {
     }
 
     private func settingsGroup(title: String, rows: [AnyView]) -> some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Text(title)
-                .font(.system(size: 21, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
-
+        settingsGroup(title: title) {
             VStack(spacing: 14) {
                 ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
                     row
                 }
             }
+        }
+    }
+
+    private func settingsGroup<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text(title)
+                .font(.system(size: 21, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+
+            content()
             .padding(16)
             .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
                     .stroke(.white.opacity(0.08), lineWidth: 1)
             )
+        }
+    }
+
+    private var emojiPackEditor: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Enter emoji separated by spaces")
+                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .foregroundStyle(.white.opacity(0.72))
+
+            TextField("", text: $settings.emojiSet, axis: .vertical)
+                .textInputAutocapitalization(.never)
+                .disableAutocorrection(true)
+                .font(.system(size: 28))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
+                .background(.black.opacity(0.28), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+
+            Text("Example: 😀 😎 🚀 🍕")
+                .font(.system(size: 13, weight: .medium, design: .rounded))
+                .foregroundStyle(.white.opacity(0.5))
         }
     }
 
