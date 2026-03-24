@@ -110,7 +110,7 @@ private struct SettingsSheet: View {
                         title: "Emoji",
                         rows: [
                             sliderRow(title: "Emoji Size", value: $settings.emojiScale, range: 0.6...1.6, step: 0.01),
-                            sliderRow(title: "Collision Size", value: $settings.collisionScale, range: 0.18...0.5, step: 0.01)
+                            sliderRow(title: "Collision Size", value: $settings.collisionScale, range: 0.36...0.9, step: 0.01)
                         ]
                     )
                 }

@@ -16,7 +16,7 @@ final class PhysicsScene: SKScene {
         var linearDamping: CGFloat = 0.25
         var angularDamping: CGFloat = 0.35
         var emojiScale: CGFloat = 1
-        var collisionScale: CGFloat = 0.32
+        var collisionScale: CGFloat = 0.64
     }
 
     private enum NodeMetricsKey {
