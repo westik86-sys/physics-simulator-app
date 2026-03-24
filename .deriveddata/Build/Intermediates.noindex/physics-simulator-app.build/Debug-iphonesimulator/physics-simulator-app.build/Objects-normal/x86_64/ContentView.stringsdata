@@ -1,5 +1,16 @@
 {
   "source": "/Users/pavelkorostelev/Desktop/physics-simulator-app/physics-simulator-app/ContentView.swift",
-  "tables": {},
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Settings",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 120
+        }
+      }
+    ]
+  },
   "version": 1
 }

@@ -11,6 +11,8 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var motionManager = MotionManager()
+    @State private var isShowingSettings = false
+    @State private var sceneSettings = PhysicsScene.Settings()
 
     private let scene: PhysicsScene = {
         let scene = PhysicsScene()
@@ -26,13 +28,13 @@ struct ContentView: View {
 
             VStack(spacing: 12) {
                 controlsBar
-                debugPanel
             }
             .padding(.horizontal, 16)
             .padding(.top, 18)
         }
         .onAppear {
             motionManager.startUpdates()
+            scene.applySettings(sceneSettings)
         }
         .onDisappear {
             motionManager.stopUpdates()
@@ -42,6 +44,14 @@ struct ContentView: View {
         }
         .onReceive(motionManager.$shakeImpulse.compactMap { $0 }) { impulse in
             scene.applyImpulse(impulse)
+        }
+        .sheet(isPresented: $isShowingSettings) {
+            SettingsSheet(settings: $sceneSettings)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
+        .onChange(of: sceneSettings) { newValue in
+            scene.applySettings(newValue)
         }
     }
 
@@ -54,26 +64,12 @@ struct ContentView: View {
             controlButton(title: "Spawn") {
                 scene.spawnRandomBody()
             }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
 
-    private var debugPanel: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            debugRow(title: "Gravity X", value: motionManager.gravityVector.dx)
-            debugRow(title: "Gravity Y", value: motionManager.gravityVector.dy)
-            debugRow(title: "Accel", value: motionManager.accelerationMagnitude)
-            debugRow(title: "Last Shake", value: motionManager.lastShakeMagnitude)
+            controlButton(title: "Settings") {
+                isShowingSettings = true
+            }
         }
-        .font(.system(size: 13, weight: .medium, design: .monospaced))
-        .foregroundStyle(.white)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(14)
-        .background(.black.opacity(0.45), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(.white.opacity(0.12), lineWidth: 1)
-        )
     }
 
     private func controlButton(title: String, action: @escaping () -> Void) -> some View {
@@ -90,12 +86,87 @@ struct ContentView: View {
             )
     }
 
-    private func debugRow(title: String, value: Double) -> some View {
-        HStack {
-            Text(title)
-            Spacer()
-            Text(value.formatted(.number.precision(.fractionLength(2))))
+}
+
+private struct SettingsSheet: View {
+    @Binding var settings: PhysicsScene.Settings
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 22) {
+                    settingsGroup(
+                        title: "Physics",
+                        rows: [
+                            sliderRow(title: "Mass", value: $settings.bodyMass, range: 0.2...2, step: 0.05),
+                            sliderRow(title: "Friction", value: $settings.bodyFriction, range: 0...1, step: 0.01),
+                            sliderRow(title: "Bounce", value: $settings.bodyRestitution, range: 0...1, step: 0.01),
+                            sliderRow(title: "Linear Damping", value: $settings.linearDamping, range: 0...1.2, step: 0.01),
+                            sliderRow(title: "Angular Damping", value: $settings.angularDamping, range: 0...1.2, step: 0.01)
+                        ]
+                    )
+
+                    settingsGroup(
+                        title: "Emoji",
+                        rows: [
+                            sliderRow(title: "Emoji Size", value: $settings.emojiScale, range: 0.6...1.6, step: 0.01),
+                            sliderRow(title: "Collision Size", value: $settings.collisionScale, range: 0.18...0.5, step: 0.01)
+                        ]
+                    )
+                }
+                .padding(20)
+            }
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
         }
+        .preferredColorScheme(.dark)
+    }
+
+    private func settingsGroup(title: String, rows: [AnyView]) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text(title)
+                .font(.system(size: 21, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+
+            VStack(spacing: 14) {
+                ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                    row
+                }
+            }
+            .padding(16)
+            .background(.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .stroke(.white.opacity(0.08), lineWidth: 1)
+            )
+        }
+    }
+
+    private func sliderRow(title: String, value: Binding<CGFloat>, range: ClosedRange<CGFloat>, step: CGFloat) -> AnyView {
+        AnyView(
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text(title)
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                    Spacer()
+                    Text(Double(value.wrappedValue).formatted(.number.precision(.fractionLength(2))))
+                        .font(.system(size: 14, weight: .medium, design: .monospaced))
+                        .foregroundStyle(.white.opacity(0.7))
+                }
+
+                Slider(
+                    value: Binding(
+                        get: { Double(value.wrappedValue) },
+                        set: { value.wrappedValue = CGFloat($0) }
+                    ),
+                    in: Double(range.lowerBound)...Double(range.upperBound),
+                    step: Double(step)
+                )
+                .tint(.white)
+            }
+        )
     }
 }
 

@@ -9,6 +9,21 @@ import SpriteKit
 import UIKit
 
 final class PhysicsScene: SKScene {
+    struct Settings: Equatable {
+        var bodyMass: CGFloat = 0.8
+        var bodyFriction: CGFloat = 0.55
+        var bodyRestitution: CGFloat = 0.35
+        var linearDamping: CGFloat = 0.25
+        var angularDamping: CGFloat = 0.35
+        var emojiScale: CGFloat = 1
+        var collisionScale: CGFloat = 0.32
+    }
+
+    private enum NodeMetricsKey {
+        static let baseSize = "baseSize"
+        static let baseRadius = "baseRadius"
+    }
+
     private struct DragState {
         let node: SKNode
         let anchor: SKNode
@@ -23,6 +38,7 @@ final class PhysicsScene: SKScene {
     private let maximumAngularVelocity: CGFloat = 8
     private let releaseImpulseMultiplier: CGFloat = 0.018
     private let emojiPalette = ["😀", "😎", "🤖", "🐥", "🍎", "🌈", "⚽️", "🪐", "🍕", "🎈", "🧩", "🚀"]
+    private(set) var settings = Settings()
 
     override func didMove(to view: SKView) {
         backgroundColor = .black
@@ -32,6 +48,16 @@ final class PhysicsScene: SKScene {
 
     func updateGravity(_ gravity: CGVector) {
         physicsWorld.gravity = gravity
+    }
+
+    func applySettings(_ settings: Settings) {
+        self.settings = settings
+
+        for node in children where node.name == "dynamicBody" {
+            guard let sprite = node as? SKSpriteNode else { continue }
+            applyDisplaySettings(to: sprite)
+            applyPhysicsSettings(to: sprite)
+        }
     }
 
     func applyImpulse(_ impulse: CGVector) {
@@ -136,8 +162,7 @@ final class PhysicsScene: SKScene {
     private func makeCircle(radius: CGFloat, position: CGPoint) -> SKSpriteNode {
         let node = makeEmojiNode(targetSize: CGSize(width: radius * 2, height: radius * 2))
         node.position = position
-        node.physicsBody = SKPhysicsBody(circleOfRadius: max(node.size.width, node.size.height) * 0.32)
-        configurePhysics(for: node.physicsBody, allowsRotation: true)
+        applyPhysicsSettings(to: node)
         node.name = "dynamicBody"
         return node
     }
@@ -145,8 +170,7 @@ final class PhysicsScene: SKScene {
     private func makeRectangle(size: CGSize, position: CGPoint) -> SKSpriteNode {
         let node = makeEmojiNode(targetSize: size)
         node.position = position
-        node.physicsBody = SKPhysicsBody(circleOfRadius: max(node.size.width, node.size.height) * 0.32)
-        configurePhysics(for: node.physicsBody, allowsRotation: true)
+        applyPhysicsSettings(to: node)
         node.name = "dynamicBody"
         return node
     }
@@ -156,7 +180,12 @@ final class PhysicsScene: SKScene {
         let fontSize = max(targetSize.width, targetSize.height) * 0.95
         let texture = makeEmojiTexture(emoji: emoji, fontSize: fontSize)
         let node = SKSpriteNode(texture: texture)
-        node.size = texture.size()
+        let textureSize = texture.size()
+        node.size = textureSize
+        node.userData = NSMutableDictionary()
+        node.userData?[NodeMetricsKey.baseSize] = NSCoder.string(for: textureSize)
+        node.userData?[NodeMetricsKey.baseRadius] = max(textureSize.width, textureSize.height) / 2
+        applyDisplaySettings(to: node)
         return node
     }
 
@@ -181,11 +210,37 @@ final class PhysicsScene: SKScene {
     private func configurePhysics(for physicsBody: SKPhysicsBody?, allowsRotation: Bool) {
         physicsBody?.affectedByGravity = true
         physicsBody?.allowsRotation = allowsRotation
-        physicsBody?.mass = 0.8
-        physicsBody?.friction = 0.55
-        physicsBody?.restitution = 0.35
-        physicsBody?.linearDamping = 0.25
-        physicsBody?.angularDamping = 0.35
+        physicsBody?.mass = settings.bodyMass
+        physicsBody?.friction = settings.bodyFriction
+        physicsBody?.restitution = settings.bodyRestitution
+        physicsBody?.linearDamping = settings.linearDamping
+        physicsBody?.angularDamping = settings.angularDamping
+    }
+
+    private func applyDisplaySettings(to node: SKSpriteNode) {
+        guard
+            let baseSizeString = node.userData?[NodeMetricsKey.baseSize] as? String
+        else {
+            return
+        }
+
+        let baseSize = NSCoder.cgSize(for: baseSizeString)
+        node.size = CGSize(
+            width: baseSize.width * settings.emojiScale,
+            height: baseSize.height * settings.emojiScale
+        )
+    }
+
+    private func applyPhysicsSettings(to node: SKSpriteNode) {
+        let baseRadius = (node.userData?[NodeMetricsKey.baseRadius] as? CGFloat) ?? (max(node.size.width, node.size.height) / 2)
+        let radius = max(8, baseRadius * settings.emojiScale * settings.collisionScale)
+        let currentVelocity = node.physicsBody?.velocity
+        let currentAngularVelocity = node.physicsBody?.angularVelocity ?? 0
+
+        node.physicsBody = SKPhysicsBody(circleOfRadius: radius)
+        configurePhysics(for: node.physicsBody, allowsRotation: true)
+        node.physicsBody?.velocity = currentVelocity ?? .zero
+        node.physicsBody?.angularVelocity = currentAngularVelocity
     }
 
     private func clampVelocity(for physicsBody: SKPhysicsBody) {
@@ -207,9 +262,9 @@ final class PhysicsScene: SKScene {
 
     private func beginDragging(with touch: UITouch) {
         let location = touch.location(in: self)
-        guard let node = atPoint(location) as? SKNode ?? atPoint(location).parent else {
-            return
-        }
+        let touchedNode = atPoint(location)
+        let node = touchedNode.name == "dynamicBody" ? touchedNode : touchedNode.parent
+        guard let node else { return }
         guard node.name == "dynamicBody", let body = node.physicsBody else { return }
 
         let anchor = SKNode()

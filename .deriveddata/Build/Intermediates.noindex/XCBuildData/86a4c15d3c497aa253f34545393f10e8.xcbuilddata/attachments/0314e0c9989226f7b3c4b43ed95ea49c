@@ -1,0 +1,59 @@
+{
+  "" : {
+    "diagnostics" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/physics-simulator-app-primary.dia",
+    "emit-module-dependencies" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/physics-simulator-app-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/physics-simulator-app-primary-emit-module.dia",
+    "pch" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/physics-simulator-app-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/physics-simulator-app-primary.swiftdeps"
+  },
+  "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/GeneratedAssetSymbols~partial.swiftmodule"
+  },
+  "/Users/pavelkorostelev/Desktop/physics-simulator-app/physics-simulator-app/ContentView.swift" : {
+    "const-values" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/ContentView.swiftconstvalues",
+    "dependencies" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/ContentView.d",
+    "diagnostics" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/ContentView.dia",
+    "index-unit-output-path" : "/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/ContentView.o",
+    "llvm-bc" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/ContentView.bc",
+    "object" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/ContentView.o",
+    "swift-dependencies" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/ContentView.swiftdeps",
+    "swiftmodule" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/ContentView~partial.swiftmodule"
+  },
+  "/Users/pavelkorostelev/Desktop/physics-simulator-app/physics-simulator-app/MotionManager.swift" : {
+    "const-values" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/MotionManager.swiftconstvalues",
+    "dependencies" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/MotionManager.d",
+    "diagnostics" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/MotionManager.dia",
+    "index-unit-output-path" : "/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/MotionManager.o",
+    "llvm-bc" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/MotionManager.bc",
+    "object" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/MotionManager.o",
+    "swift-dependencies" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/MotionManager.swiftdeps",
+    "swiftmodule" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/MotionManager~partial.swiftmodule"
+  },
+  "/Users/pavelkorostelev/Desktop/physics-simulator-app/physics-simulator-app/PhysicsScene.swift" : {
+    "const-values" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/PhysicsScene.swiftconstvalues",
+    "dependencies" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/PhysicsScene.d",
+    "diagnostics" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/PhysicsScene.dia",
+    "index-unit-output-path" : "/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/PhysicsScene.o",
+    "llvm-bc" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/PhysicsScene.bc",
+    "object" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/PhysicsScene.o",
+    "swift-dependencies" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/PhysicsScene.swiftdeps",
+    "swiftmodule" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/PhysicsScene~partial.swiftmodule"
+  },
+  "/Users/pavelkorostelev/Desktop/physics-simulator-app/physics-simulator-app/physics_simulator_appApp.swift" : {
+    "const-values" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/physics_simulator_appApp.swiftconstvalues",
+    "dependencies" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/physics_simulator_appApp.d",
+    "diagnostics" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/physics_simulator_appApp.dia",
+    "index-unit-output-path" : "/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/physics_simulator_appApp.o",
+    "llvm-bc" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/physics_simulator_appApp.bc",
+    "object" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/physics_simulator_appApp.o",
+    "swift-dependencies" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/physics_simulator_appApp.swiftdeps",
+    "swiftmodule" : "/Users/pavelkorostelev/Desktop/physics-simulator-app/.deriveddata/Build/Intermediates.noindex/physics-simulator-app.build/Debug-iphonesimulator/physics-simulator-app.build/Objects-normal/x86_64/physics_simulator_appApp~partial.swiftmodule"
+  }
+}
