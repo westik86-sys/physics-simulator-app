@@ -13,6 +13,13 @@ struct ContentView: View {
     @StateObject private var motionManager = MotionManager()
     @State private var isShowingSettings = false
     @State private var sceneSettings = PhysicsScene.Settings()
+    @AppStorage("settings.bodyMass") private var storedBodyMass = 0.8
+    @AppStorage("settings.bodyFriction") private var storedBodyFriction = 0.55
+    @AppStorage("settings.bodyRestitution") private var storedBodyRestitution = 0.35
+    @AppStorage("settings.linearDamping") private var storedLinearDamping = 0.25
+    @AppStorage("settings.angularDamping") private var storedAngularDamping = 0.35
+    @AppStorage("settings.emojiScale") private var storedEmojiScale = 1.0
+    @AppStorage("settings.collisionScale") private var storedCollisionScale = 0.64
 
     private let scene: PhysicsScene = {
         let scene = PhysicsScene()
@@ -33,6 +40,7 @@ struct ContentView: View {
             .padding(.top, 18)
         }
         .onAppear {
+            sceneSettings = loadStoredSettings()
             motionManager.startUpdates()
             scene.applySettings(sceneSettings)
         }
@@ -51,6 +59,7 @@ struct ContentView: View {
                 .presentationDragIndicator(.visible)
         }
         .onChange(of: sceneSettings) { newValue in
+            saveSettings(newValue)
             scene.applySettings(newValue)
         }
     }
@@ -84,6 +93,28 @@ struct ContentView: View {
                 Capsule()
                     .stroke(.white.opacity(0.14), lineWidth: 1)
             )
+    }
+
+    private func loadStoredSettings() -> PhysicsScene.Settings {
+        PhysicsScene.Settings(
+            bodyMass: storedBodyMass,
+            bodyFriction: storedBodyFriction,
+            bodyRestitution: storedBodyRestitution,
+            linearDamping: storedLinearDamping,
+            angularDamping: storedAngularDamping,
+            emojiScale: storedEmojiScale,
+            collisionScale: storedCollisionScale
+        )
+    }
+
+    private func saveSettings(_ settings: PhysicsScene.Settings) {
+        storedBodyMass = settings.bodyMass
+        storedBodyFriction = settings.bodyFriction
+        storedBodyRestitution = settings.bodyRestitution
+        storedLinearDamping = settings.linearDamping
+        storedAngularDamping = settings.angularDamping
+        storedEmojiScale = settings.emojiScale
+        storedCollisionScale = settings.collisionScale
     }
 
 }
