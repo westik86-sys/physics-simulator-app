@@ -351,6 +351,7 @@ final class PhysicsScene: SKScene {
     private func pop(node: SKNode) {
         let popPosition = node.position
         let popColor = emojiColor(from: node)
+        let shardTexture = emojiShardTexture(from: node)
         node.physicsBody = nil
         run(makeScreenShake())
 
@@ -371,8 +372,8 @@ final class PhysicsScene: SKScene {
             ])
         )
 
-        addChild(makeBurstEmitter(at: popPosition, color: popColor, scale: 0.16, speed: 185, count: 16, lifetime: 0.42))
-        addChild(makeBurstEmitter(at: popPosition, color: .white, scale: 0.08, speed: 120, count: 26, lifetime: 0.3))
+        addChild(makeBurstEmitter(at: popPosition, texture: shardTexture, color: .white, scale: 0.2, speed: 185, count: 14, lifetime: 0.42, blendMode: .alpha))
+        addChild(makeBurstEmitter(at: popPosition, texture: shardTexture, color: popColor.withAlphaComponent(0.9), scale: 0.11, speed: 120, count: 22, lifetime: 0.3, blendMode: .add))
 
         let group = SKAction.group([
             .scale(to: 1.45, duration: 0.1),
@@ -384,17 +385,21 @@ final class PhysicsScene: SKScene {
 
     private func makeBurstEmitter(
         at position: CGPoint,
+        texture: SKTexture,
         color: UIColor,
         scale: CGFloat,
         speed: CGFloat,
         count: Int,
-        lifetime: CGFloat
+        lifetime: CGFloat,
+        blendMode: SKBlendMode
     ) -> SKEmitterNode {
         let emitter = SKEmitterNode()
         emitter.position = position
         emitter.zPosition = 6
-        emitter.particleTexture = makeParticleTexture(color: color)
-        emitter.particleBirthRate = 0
+        emitter.particleTexture = texture
+        emitter.particleColor = color
+        emitter.particleColorBlendFactor = 0.35
+        emitter.particleBirthRate = CGFloat(count) * 60
         emitter.numParticlesToEmit = count
         emitter.particleLifetime = lifetime
         emitter.particleLifetimeRange = lifetime * 0.2
@@ -411,27 +416,25 @@ final class PhysicsScene: SKScene {
         emitter.yAcceleration = -25
         emitter.particleRotationRange = .pi * 2
         emitter.particleRotationSpeed = 7
-        emitter.particleBlendMode = .add
-        emitter.advanceSimulationTime(0.02)
-        emitter.run(.sequence([.wait(forDuration: TimeInterval(lifetime + 0.12)), .removeFromParent()]))
+        emitter.particleBlendMode = blendMode
+        emitter.resetSimulation()
+        emitter.run(
+            .sequence([
+                .wait(forDuration: 0.05),
+                .run { emitter.particleBirthRate = 0 },
+                .wait(forDuration: TimeInterval(lifetime + 0.12)),
+                .removeFromParent()
+            ])
+        )
         return emitter
     }
 
-    private func makeParticleTexture(color: UIColor) -> SKTexture {
-        let size = CGSize(width: 14, height: 14)
-        let renderer = UIGraphicsImageRenderer(size: size)
-        let image = renderer.image { context in
-            let rect = CGRect(origin: .zero, size: size)
-            let cgContext = context.cgContext
-
-            cgContext.setFillColor(color.cgColor)
-            cgContext.fillEllipse(in: rect.insetBy(dx: 2, dy: 2))
-
-            cgContext.setFillColor(UIColor.white.withAlphaComponent(0.7).cgColor)
-            cgContext.fillEllipse(in: CGRect(x: 4, y: 3, width: 4, height: 4))
+    private func emojiShardTexture(from node: SKNode) -> SKTexture {
+        if let sprite = node as? SKSpriteNode, let texture = sprite.texture {
+            return texture
         }
 
-        return SKTexture(image: image)
+        return makeEmojiTexture(emoji: "✨", fontSize: 28)
     }
 
     private func makeScreenShake() -> SKAction {
